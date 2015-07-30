@@ -54,12 +54,9 @@ function UNDEFINED() { }
     firstName: null,
     lastName: null,
 
-    fullName: function() {
-      var firstName = this.get('firstName');
-      var lastName = this.get('lastName');
-
-     return firstName + ' ' + lastName;
-    }.property('firstName', 'lastName')
+    fullName: Ember.computed('firstName', 'lastName', function() {
+      return this.get('firstName') + ' ' + this.get('lastName');
+    })
   });
 
   var tom = Person.create({
@@ -81,24 +78,16 @@ function UNDEFINED() { }
     firstName: null,
     lastName: null,
 
-    fullName: function(key, value, oldValue) {
-      // getter
-      if (arguments.length === 1) {
-        var firstName = this.get('firstName');
-        var lastName = this.get('lastName');
-
-        return firstName + ' ' + lastName;
-
-      // setter
-      } else {
-        var name = value.split(' ');
-
-        this.set('firstName', name[0]);
-        this.set('lastName', name[1]);
-
-        return value;
+    fullName: Ember.computed('firstName', 'lastName', {
+      get(key) {
+        return this.get('firstName') + ' ' + this.get('lastName');
+      },
+      set(key, value) {
+        var [ firstName, lastName ] = value.split(/\s+/);
+        this.set('firstName', firstName);
+        this.set('lastName',  lastName);
       }
-    }.property('firstName', 'lastName')
+    })  
   });
 
   var person = Person.create();
